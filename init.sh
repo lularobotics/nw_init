@@ -127,6 +127,27 @@ else
 fi
 cd ${CUR_DIR}/lularobotics_ws;
 catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo;
+
+echo -e "###############################################################"
+echo -e "# Your workspace is now setup in ${CUR_DIR}/lularobotics_ws"
+echo -e "# To run the basic example do the following:"
+echo -e "# --- terminal 1:"
+echo -e "# cd ${CUR_DIR}/lularobotics_ws"
+echo -e "# source devel/setup.bash"
+echo -e "# roscore"
+echo -e "# --- terminal 2:"
+echo -e "# cd ${CUR_DIR}/lularobotics_ws"
+echo -e "# source devel/setup.bash"
+echo -e "# roslaunch nw_mico_client mico_rviz_only.launch"
+echo -e "# --- terminal 3:"
+echo -e "# cd ${CUR_DIR}/lularobotics_ws"
+echo -e "# source devel/setup.bash"
+echo -e "# rosrun nw_motion_optimization start_motion_optimization_service.sh"
+echo -e "# --- terminal 4:"
+echo -e "# cd ${CUR_DIR}/lularobotics_ws"
+echo -e "# source devel/setup.bash"
+echo -e "# rosrun nw_mico_client nw_mico_simple_move_client"
+echo -e "###############################################################"
 }
 
 # copied from get.docker.com

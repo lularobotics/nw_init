@@ -150,28 +150,35 @@ def Load_image(image):
         return False
 
     image_name = image['name']
-    if Check_image(image_name):
-        Print_separator()
-        Print_comment('Image with name ' + image_name + ' does exist')
-        Print_comment('This image will now be replaced')
-        Print_comment('Please make sure that our system is not running')
-        Print_comment('otherwise this process will fail')
-        Print_separator()
-        if User_continue():
-            return True
-        if not Remove_image(image_name):
-            return False
-    image_path = image['path']
+    # if Check_image(image_name):
+    #     Print_separator()
+    #     Print_comment('Image with name ' + image_name + ' does exist')
+    #     Print_comment('This image will now be replaced')
+    #     Print_comment('Please make sure that our system is not running')
+    #     Print_comment('otherwise this process will fail')
+    #     Print_separator()
+    #     if User_continue():
+    #         return True
+    #     if not Remove_image(image_name):
+    #         return False
 
-    cmd = 'docker load'
-    cmd += ' -i ' + image_path
-    Print_separator()
-    Print_comment('running load image, this might take several minutes')
-    Print_comment(cmd)
-    Print_separator()
+    cmd = 'docker pull'
+    cmd += ' ' + image_name
     if Execute_shell_script(cmd, print_stdout=True).returncode != 0:
         return False
     return True
+
+    # image_path = image['path']
+
+    # cmd = 'docker load'
+    # cmd += ' -i ' + image_path
+    # Print_separator()
+    # Print_comment('running load image, this might take several minutes')
+    # Print_comment(cmd)
+    # Print_separator()
+    # if Execute_shell_script(cmd, print_stdout=True).returncode != 0:
+    #     return False
+    # return True
 
 def Delete_image(image):
     if image is None:

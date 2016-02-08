@@ -25,8 +25,11 @@ if ! command_exists docker; then
     sudo usermod -a -G docker $USER
     echo -e "###############################################################"
     echo -e "# !!!! IMPORTANT !!!! "
-    echo -e "# Please restart your computer now"
+    echo -e "# We will restart your machine in 10 sec."
+    echo -e "# Please RUN this script AGAIN afterwards to finish the initialization."
     echo -e "###############################################################"
+    sleep 10;
+    sudo shutdown -r now
     exit 0;
 fi
 
@@ -83,13 +86,14 @@ catkin_init_workspace
 
 echo -e "clone package for the interaction with the binary distributed motion optimization library"
 git clone git@github.com:lularobotics/nw_motion_optimization.git
-echo -e "clone package with messages"
-git clone git@github.com:lularobotics/nw_messages.git
+echo -e "clone package client example"
+git@github.com:lularobotics/nw_mico_client.git
+echo -e "clone package with move action"
+git clone git@github.com:lularobotics/riemo_move_action.git
 echo -e "clone package with an example client, illustrating how to use motion optimization"
 git clone git@github.com:lularobotics/nw_example.git
 cd ${CUR_DIR}/lularobotics_ws;
 catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo;
-
 }
 
 # copied from get.docker.com

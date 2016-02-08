@@ -79,19 +79,52 @@ fi
 # setting up our workspace
 ################################################################################
 CUR_DIR=$(pwd)
-mkdir ${CUR_DIR}/lularobotics_ws;
-mkdir ${CUR_DIR}/lularobotics_ws/src;
-cd ${CUR_DIR}/lularobotics_ws/src;
-catkin_init_workspace
+TMP_PATH=${CUR_DIR}/lularobotics_ws;
+if [[ ! -d ${TMP_PATH} ]];then
+    mkdir ${TMP_PATH};
+fi
+TMP_PATH=${CUR_DIR}/lularobotics_ws/src;
+if [[ ! -d ${TMP_PATH} ]];then
+    mkdir ${TMP_PATH};
+fi
+cd ${TMP_PATH}
+TMP_PATH=${CUR_DIR}/lularobotics_ws/src/CMakeLists.txt;
+if [[ ! -e ${TMP_PATH} ]];then
+    catkin_init_workspace
+fi
 
-echo -e "clone package for the interaction with the binary distributed motion optimization library"
-git clone git@github.com:lularobotics/nw_motion_optimization.git
-echo -e "clone package client example"
-git@github.com:lularobotics/nw_mico_client.git
-echo -e "clone package with move action"
-git clone git@github.com:lularobotics/riemo_move_action.git
-echo -e "clone package with an example client, illustrating how to use motion optimization"
-git clone git@github.com:lularobotics/nw_example.git
+TMP_PATH=${CUR_DIR}/lularobotics_ws/src/kinova-ros;
+if [[ ! -d ${TMP_PATH} ]];then
+    echo -e "clone package for the the kinova roboots"
+    git clone https://github.com/Kinovarobotics/kinova-ros.git
+else
+    cd ${TMP_PATH}
+    git pull 
+fi
+TMP_PATH=${CUR_DIR}/lularobotics_ws/src/nw_motion_optimization;
+if [[ ! -d ${TMP_PATH} ]];then
+    echo -e "clone package for the interaction with the binary distributed motion optimization library"
+    git clone https://github.com/lularobotics/nw_motion_optimization.git
+else
+    cd ${TMP_PATH}
+    git pull 
+fi
+TMP_PATH=${CUR_DIR}/lularobotics_ws/src/nw_mico_client;
+if [[ ! -d ${TMP_PATH} ]];then
+    echo -e "clone package client example"
+    git clone https://github.com/lularobotics/nw_mico_client.git
+else
+    cd ${TMP_PATH}
+    git pull 
+fi
+TMP_PATH=${CUR_DIR}/lularobotics_ws/src/riemo_move_action;
+if [[ ! -d ${TMP_PATH} ]];then
+    echo -e "clone package with move action"
+    git clone https://github.com/lularobotics/riemo_move_action.git
+else
+    cd ${TMP_PATH}
+    git pull 
+fi
 cd ${CUR_DIR}/lularobotics_ws;
 catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo;
 }

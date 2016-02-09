@@ -52,17 +52,6 @@ if ! command_exists catkin_init_workspace; then
 fi
 
 echo -e "###############################################################"
-echo -e "# We will now start loading our binary software package"
-echo -e "# this will take several minutes"
-echo -e "# Continue [y/N] "
-echo -e "###############################################################"
-read SETUP_READY;
-if [[ "y" != "${SETUP_READY}" ]];then
-    echo -e "stopped since you did not confirm";
-    exit 1;
-fi
-
-echo -e "###############################################################"
 echo -e "# If the docker credentials are not set to"
 echo -e "# Username: lularobotics_nw"
 echo -e "# Password: private communication"
@@ -73,6 +62,18 @@ read SETUP_READY;
 if [[ "n" != "${SETUP_READY}" ]];then
     docker login
 fi
+
+echo -e "###############################################################"
+echo -e "# We will now start loading our binary software package"
+echo -e "# this will take several minutes"
+echo -e "# Continue [y/N] "
+echo -e "###############################################################"
+read SETUP_READY;
+if [[ "y" != "${SETUP_READY}" ]];then
+    echo -e "stopped since you did not confirm";
+    exit 1;
+fi
+
 
 bash ${SCRIPT_DIR}/data/docker_tools.sh --load-image
 

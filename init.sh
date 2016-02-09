@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
@@ -60,6 +60,18 @@ read SETUP_READY;
 if [[ "y" != "${SETUP_READY}" ]];then
     echo -e "stopped since you did not confirm";
     exit 1;
+fi
+
+echo -e "###############################################################"
+echo -e "# If the docker credentials are not set to"
+echo -e "# Username: lularobotics_nw"
+echo -e "# Password: private communication"
+echo -e "# Email: your choice :)"
+echo -e "# Update credentials [Y/n] "
+echo -e "###############################################################"
+read SETUP_READY;
+if [[ "n" != "${SETUP_READY}" ]];then
+    docker login
 fi
 
 bash ${SCRIPT_DIR}/data/docker_tools.sh --load-image

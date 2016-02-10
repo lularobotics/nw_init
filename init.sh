@@ -8,6 +8,27 @@ command_exists() {
 	command -v "$@" > /dev/null 2>&1
 }
 
+user_confirm() {
+    NOT_FINISHED=true
+    while ${NOT_FINISHED} ;do
+        echo -e "$1 [y/n] default($2) "
+        read USER_INPUT;
+        if [[ "y" == "${USER_INPUT}" ]];then
+            USER_CONFIRM_RESULT="y";
+            NOT_FINISHED=false;
+        elif [[ "n" == "${USER_INPUT}" ]];then
+            USER_CONFIRM_RESULT="n";
+            NOT_FINISHED=false;
+        elif [[ "" == "${USER_INPUT}" ]];then
+            USER_CONFIRM_RESULT="$2";
+            NOT_FINISHED=false;
+        else
+            echo -e "# only y, n, and nothing, are possible choices."
+            echo -e "# default is $2"
+        fi
+    done
+}
+
 do_install() {
 ###############################################################
 # we make sure that we have docker installed
@@ -35,16 +56,22 @@ fi
 
 if ! command_exists catkin_init_workspace; then
     echo -e "###############################################################"
-    echo -e "# ros groovy or above is not sourced"
+    echo -e "# ros groovy or indigo is not sourced"
     echo -e "###############################################################"
     if [[ -d "/opt/ros/indigo" ]];then
         echo -e "###############################################################"
         echo -e "# found /opt/ros/indigo/setup.bash"
         echo -e "###############################################################"
         source /opt/ros/indigo/setup.bash
+
+    elif [[ -d "/opt/ros/indigo" ]];then
+        echo -e "###############################################################"
+        echo -e "# found /opt/ros/groovy/setup.bash"
+        echo -e "###############################################################"
+        source /opt/ros/groovy/setup.bash
     else
         echo -e "###############################################################"
-        echo -e "# ros groove >= is require, please install the dependency or source the setup.bash in ,your ros distribution prior to calling this script."
+        echo -e "# ros groove or indigo is require, please install the dependency or source the setup.bash in ,your ros distribution prior to calling this script."
         echo -e "# http://wiki.ros.org/indigo/Installation/Ubuntu"
         echo -e "###############################################################"
         exit 1;
@@ -56,21 +83,17 @@ echo -e "# If the docker credentials are not set to"
 echo -e "# Username: lularobotics_nw"
 echo -e "# Password: private communication"
 echo -e "# Email: your choice :)"
-echo -e "# Update credentials [Y/n] "
-echo -e "###############################################################"
-read SETUP_READY;
-if [[ "n" != "${SETUP_READY}" ]];then
+user_confirm "# Update credentials" "y"
+if [[ "y" == "${USER_CONFIRM_RESULT}" ]];then
     docker login
 fi
 
 echo -e "###############################################################"
 echo -e "# We will now start loading our binary software package"
 echo -e "# this will take several minutes"
-echo -e "# Continue [y/N] "
-echo -e "###############################################################"
-read SETUP_READY;
-if [[ "y" != "${SETUP_READY}" ]];then
-    echo -e "stopped since you did not confirm";
+user_confirm "# Continue" "n"
+if [[ "n" == "${USER_CONFIRM_RESULT}" ]];then
+    echo -e "stopped since user did want to stop";
     exit 1;
 fi
 
@@ -80,11 +103,9 @@ bash ${SCRIPT_DIR}/data/docker_tools.sh --load-image
 echo -e "###############################################################"
 echo -e "# We will now start setting up a new workspace for our example"
 echo -e "# in the current directory $(pwd)"
-echo -e "# Continue [y/N] "
-echo -e "###############################################################"
-read SETUP_READY;
-if [[ "y" != "${SETUP_READY}" ]];then
-    echo -e "stopped since you did not confirm the current directory";
+user_confirm "# Continue" "n"
+if [[ "n" == "${USER_CONFIRM_RESULT}" ]];then
+    echo -e "stopped since user did not confirm the current directory";
     exit 1;
 fi
 

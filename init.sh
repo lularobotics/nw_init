@@ -184,7 +184,7 @@ echo -e "# rosrun nw_motion_optimization start_motion_optimization_service.sh"
 echo -e "# --- terminal 4:"
 echo -e "# cd ${CUR_DIR}/lularobotics_ws"
 echo -e "# source devel/setup.bash"
-echo -e "# rosrun nw_mico_client nw_mico_simple_move_client"
+echo -e "# roslaunch nw_mico_client mico_simple_client.launch"
 echo -e "###############################################################"
 }
 

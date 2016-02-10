@@ -83,26 +83,26 @@ echo -e "# If the docker credentials are not set to"
 echo -e "# Username: lularoboticsnw"
 echo -e "# Password: private communication"
 echo -e "# Email: your choice :)"
+echo -e "# This only has to be setup the first time."
 user_confirm "# Update credentials" "y"
 if [[ "y" == "${USER_CONFIRM_RESULT}" ]];then
     docker login
 fi
 
 echo -e "###############################################################"
-echo -e "# We will now start loading our binary software package"
-echo -e "# this will take several minutes"
+echo -e "# We will update binary software package with the latest version"
+echo -e "# this will take several minutes for the first time."
 user_confirm "# Continue" "n"
 if [[ "n" == "${USER_CONFIRM_RESULT}" ]];then
     echo -e "stopped since user did want to stop";
     exit 1;
 fi
 
-
 bash ${SCRIPT_DIR}/data/docker_tools.sh --load-image
 
 echo -e "###############################################################"
-echo -e "# We will now start setting up a new workspace for our example"
-echo -e "# in the current directory $(pwd)"
+echo -e "# We will setup a workspace in $(pwd)/lularobotics_ws if not existing"
+echo -e "# If existing we will update our repositories"
 user_confirm "# Continue" "n"
 if [[ "n" == "${USER_CONFIRM_RESULT}" ]];then
     echo -e "stopped since user did not confirm the current directory";
@@ -164,6 +164,10 @@ catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo;
 
 echo -e "###############################################################"
 echo -e "# Your workspace is now setup in ${CUR_DIR}/lularobotics_ws"
+echo -e "###############################################################"
+echo -e "# To start the basic example you can call"
+echo -e "# bash DIRECTORY_INIT.sh/start_example.sh ${CUR_DIR}/lularobotics_ws"
+echo -e "###############################################################"
 echo -e "# To run the basic example do the following:"
 echo -e "# --- terminal 1:"
 echo -e "# cd ${CUR_DIR}/lularobotics_ws"

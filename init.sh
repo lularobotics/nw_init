@@ -80,7 +80,7 @@ fi
 
 echo -e "###############################################################"
 echo -e "# If the docker credentials are not set to"
-echo -e "# Username: lularobotics_nw"
+echo -e "# Username: lularoboticsNw"
 echo -e "# Password: private communication"
 echo -e "# Email: your choice :)"
 user_confirm "# Update credentials" "y"

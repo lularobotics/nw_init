@@ -31,6 +31,7 @@ if [[ ! -e ${DIR_LULAROBOTICS_NW}/devel/setup.bash ]];then
     echo -e "###############################################################"
     exit 1
 fi
+source ${DIR_LULAROBOTICS_NW}/devel/setup.bash
 
 if ! command_exists roscore; then
     echo -e "###############################################################"
@@ -68,3 +69,13 @@ echo -e "# we are planning in the background please wait"
 echo -e "# the robot should move soon :)"
 echo -e "###############################################################"
 read USER_INPUT;
+
+
+echo -e "###############################################################"
+echo -e "# stopping motion optimization emulator"
+echo -e "###############################################################"
+rosrun nw_motion_optimization stop_motion_optimization_emulator.sh &
+echo -e "###############################################################"
+echo -e "# stopping motion optimization service"
+echo -e "###############################################################"
+rosrun nw_motion_optimization stop_motion_optimization_service.sh &

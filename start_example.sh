@@ -44,21 +44,21 @@ fi
 echo -e "###############################################################"
 echo -e "# starting up the roscore"
 echo -e "###############################################################"
-roscore &
+roscore > /dev/null 2>&1&
 sleep 1;
 echo -e "###############################################################"
 echo -e "# starting up rviz"
 echo -e "###############################################################"
-roslaunch nw_mico_client mico_rviz_only.launch&
+roslaunch nw_mico_client mico_rviz_only.launch > /dev/null 2>&1&
 sleep 4;
 echo -e "###############################################################"
 echo -e "# starting up motion optimization emulator"
 echo -e "###############################################################"
-rosrun nw_motion_optimization start_motion_optimization_emulator.sh &
+rosrun nw_motion_optimization start_motion_optimization_emulator.sh > /dev/null 2>&1&
 echo -e "###############################################################"
 echo -e "# starting up motion optimization service"
 echo -e "###############################################################"
-rosrun nw_motion_optimization start_motion_optimization_service.sh &
+rosrun nw_motion_optimization start_motion_optimization_service.sh > /dev/null 2>&1&
 echo -e "###############################################################"
 echo -e "# running the client"
 echo -e "###############################################################"
@@ -74,8 +74,8 @@ read USER_INPUT;
 echo -e "###############################################################"
 echo -e "# stopping motion optimization emulator"
 echo -e "###############################################################"
-rosrun nw_motion_optimization stop_motion_optimization_emulator.sh &
+rosrun nw_motion_optimization stop_motion_optimization_emulator.sh > /dev/null 2>&1&
 echo -e "###############################################################"
 echo -e "# stopping motion optimization service"
 echo -e "###############################################################"
-rosrun nw_motion_optimization stop_motion_optimization_service.sh &
+rosrun nw_motion_optimization stop_motion_optimization_service.sh > /dev/null 2>&1&

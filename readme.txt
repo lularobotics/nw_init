@@ -2,6 +2,8 @@
 Setting up and building
 ===============================================================================
 
+System requirements: Ubuntu 14.04 and ROS Indigo
+
 Run the following:
 
   mkdir lula; cd lula
@@ -25,7 +27,7 @@ Follow the instructions:
 
 
 ===============================================================================
-How to run the demo
+How to run the demo(s)
 ===============================================================================
 
 There are three nodes that need to be started in order to setup the system
@@ -45,6 +47,8 @@ use the API is given in
 
 To start these nodes up and run the client, run the following (making 
 sure that the workspace's devel/setup.bash script is sourced for each:
+
+Demo: Playground
 
   # In terminal 1
   roslaunch nw_mico_client mico_rviz_only.launch
@@ -66,6 +70,14 @@ sure that the workspace's devel/setup.bash script is sourced for each:
 
   # Also, we can place a sphere in the environment by executing:
   rosrun nw_mico_client set_obstacle_parameters <x> <y> <z> <radius>
+
+Demo: Comprehensive
+
+  # Open up terminals 1 through 3 as above, but in terminal 4 instead of running the 
+  # run_riemo_move_mico_playground script, execute the "run_all" script. Make sure
+  # You're actually in the "scripts" directory for this:
+  roscd nw_mico_client/scripts
+  ./run_all
 
 Troubleshooting
 - When rviz comes up, some times the main screen is black. This seems to be a

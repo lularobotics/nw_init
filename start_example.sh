@@ -62,7 +62,7 @@ rosrun nw_motion_optimization start_motion_optimization_service.sh > /dev/null 2
 echo -e "###############################################################"
 echo -e "# running the client"
 echo -e "###############################################################"
-roslaunch nw_mico_client mico_simple_client.launch
+rosrun nw_mico_client run_riemo_move_mico_playground -.3 .5 .3
 
 echo -e "###############################################################"
 echo -e "# we are planning in the background please wait"

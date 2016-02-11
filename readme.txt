@@ -1,0 +1,193 @@
+===============================================================================
+Setting up and building
+===============================================================================
+
+Run the following:
+
+  mkdir lula; cd lula
+  git clone https://github.com/lularobotics/nw_init.git
+  ./nw_init/init.sh
+
+Follow the instructions:
+1. Set the credientials to the ones we sent you by email.
+2. Say yes when it asks to update the binary. If you've already run this step,
+   the update will be very fast because the image will already be cached on
+   your local machine. It's a good idea to always run this step.
+3. Say yes to setting up the lularobotics_ws workspace.
+4. If there is a problem with the build, you can always rebuild manually by
+   going into the lularobotics_ws workspace and running
+
+     catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
+   
+   In general, when changing any of the client code (see the note below about
+   playing with speed modulation in the execution), you can rebuild manually
+   this way.
+
+
+===============================================================================
+How to run the demo
+===============================================================================
+
+There are three nodes that need to be started in order to setup the system
+1. Rviz with the /robot_description parameter
+2. The robot emulator: this node serves to substitute for the real robot in
+   simulation.  It keeps track of and publishes the current state, and accepts
+   joint trajectory messages to emulate their execution. Sends transforms to
+   Rviz for visualization of the movements.
+3. Motion optimization service: Creates the planning action service and the 
+   trajectory query service.
+
+And finally, once those are setup, motion optimization requests can be sent to
+the robot using the Plan action API discussed below. A simple example of how to 
+use the API is given in 
+
+  nw_mico_client/src/nw_mico_client/nw_mico_simple_move_client_main.cpp
+
+To start these nodes up and run the client, run the following (making 
+sure that the workspace's devel/setup.bash script is sourced for each:
+
+  # In terminal 1
+  roslaunch nw_mico_client mico_rviz_only.launch
+
+  # In terminal 2
+  rosrun nw_motion_optimization start_motion_optimization_emulator.sh
+
+  # In terminal 3
+  rosrun nw_motion_optimization start_motion_optimization_service.sh
+
+  # In terminal 4, now we can run the client to make planning requests. In the following,
+  # <x>, <y>, <z> specifies a target location:
+  rosrun nw_mico_client run_riemo_move_mico_playground <x> <y> <z>
+
+  # To play with the settings of the run_riemo_move_mico_playground script:
+  roscd nw_mico_client scripts
+  vim run_riemo_move_mico_playground
+  # Modify the constraint settings as described in the comments.
+
+  # Also, we can place a sphere in the environment by executing:
+  rosrun nw_mico_client set_obstacle_parameters <x> <y> <z> <radius>
+
+Troubleshooting
+- When rviz comes up, some times the main screen is black. This seems to be a
+  race condition within rviz, itself. Closing it down and restarting it usually
+  works.
+- When rviz starts up, and before the robot emulator has been started, the
+  robot has no registered transforms so it is just a bundle of unrendered parts
+  at the origin. This goes away immediately once the robot emulator has
+  started.
+- The obstacle doesn't appear until the planning server has been started.
+- The code uses c++11. If you're not familiar with it, you might find the auto
+  keyword confusing.  It simply tells the compiler to infer the type from the
+  right hand side of the equals sign.
+- When the approach constraint is set, the robot achieves the right
+  orientation, but it doesn't *approach* from that orientation. The approach
+  functionality has not yet been implemented, but it will soon.
+- Robustness will improve. The motion optimization is usually quite good, but
+  every once in a while, the random initialization causes planning failures.
+  We will be implementing multithreaded optimization with with multiple
+  initialization strategies soon; those issues should go away.
+
+
+===============================================================================
+The basic API
+===============================================================================
+
+ROS topics
+- /joint_states : the robot emulator publishes the current joint states on this
+  topic as sensor_msgs::JointState messages.  The motion optimization service
+  consumes these messages to know where the robot currently is when it starts
+  planning and whenever it is queried for a trajectory once the LQR is ready.
+- /joint_trajectory : The trajectory query service publishes on this topic.
+  The robot emulator consumes these messages and emulates movement along the
+  trajectory while sending visualization transforms to Rviz.
+
+
+See the demo client for an example of how to use the API:
+
+  nw_mico_client/src/nw_mico_client/nw_mico_simple_move_client_main.cpp
+
+Basic decomposition:
+- The client makes a planning request to the planning action service
+- Once motion optimization is complete, the client is notified, and the
+  trajectory query service is ready. The trajectory query service is an
+  interface to querying trajectories from the LQR resulting from the motion
+  optimization.
+- Trajectories can be queried with differing time-dilations to speed up or slow
+  down the trajectory.
+
+Setting the request: 
+- Basic API specified through: riemo_move_action/action/Plan.action
+- Here's a detailed breakdown of the request's fields taken from the action definition:
+
+  # 3D target position
+  geometry_msgs/Point target
+
+  # Set to true to include an orientation constraint to keep the hand upright
+  # throughout the entire motion.
+  bool use_upright_orientation_constraint
+
+  # Set to true to include an orientation constraint to keep the hand upright
+  # only at the final configuration.
+  bool use_upright_orientation_constraint_end_only
+
+  # Note on format: in the following <v{x,y,z}> denotes a vector and <pt{x,y,z}>
+  # denotes a point.
+
+  # Specify an approach constraint. This constraint is a vector, specified as a comma
+  # separated string of three numbers, specifying the direction that the end-effector should
+  # approach the target from at the end of the motion.
+  string approach_constraint_csv # Format: <vx>,<vy>,<vz>
+
+  # This CSV gives a ray pointing from the the center of the sphere to the
+  # surface where a linearization constraint should be added. A linearization
+  # constraint is a linear function whose zero set is offset by .03 m radially
+  # from the tangent to the surface and increases away from the sphere. The
+  # constraint is applied t_fraction of the way through the trajectory and it
+  # enforces that the end-effector be on the position side of the plane at that
+  # point.
+  string obstacle_linearization_constraint_csv # Format: <vx>,<vy>,<vz>,<t_fraction>
+
+  # The passthrough constraint is a more restrictive variant of a constraint that
+  # constrains the behavior of the robot as it moves from point to point. It gives
+  # a full box at (<ptx>,<pty>,<ptz>) with 1/2 side length (radius) of <radius>. 
+  # It is again applied t_fraction of the way through the trajectory.
+  string passthrough_constraint_csv # Format: <ptx>,<pty>,<ptz>,<radius>,<t_fraction>
+
+
+
+Placing and removing spherical obstacles:
+
+  rosrun nw_mico_client set_obstacle_parameters <x> <y> <z> <radius>
+  rosrun nw_mico_client set_obstacle_parameters clear
+
+Example
+
+  # Place a nominally sized sphere of radius .15 m at pt = (0, .5, .1).
+  rosrun nw_mico_client set_obstacle_parameters 0 .5 .1 .15
+
+  # Now remove the sphere
+  rosrun nw_mico_client set_obstacle_parameters clear
+
+
+===============================================================================
+How to play around with the system
+===============================================================================
+
+Moving the obstacle around: The sphere can be moved around and even removed 
+as specified in the section abovce.
+
+Modifying the constraints: The easiest way to play around with the planner
+is to use run_riemo_move_mico_playground. The user can turn on and off various
+subsets of constraints by setting and unsetting the shell script variables.
+
+
+===============================================================================
+Modulating the speed of execution in the demos on the fly
+===============================================================================
+
+Uncomment the line "#define MODULATE_SPEED" in 
+
+  nw_mico_client/nw_mico_simple_move_client_main.cpp
+
+and rebuild the client to see an example of repeatedly slowing down and
+speeding up the motion mid-execution.

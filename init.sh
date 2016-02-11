@@ -79,20 +79,21 @@ if ! command_exists catkin_init_workspace; then
 fi
 
 echo -e "###############################################################"
-echo -e "# If the docker credentials are not set to"
-echo -e "# Username: lularoboticsnw"
-echo -e "# Password: private communication"
-echo -e "# Email: your choice :)"
-echo -e "# This only has to be setup the first time."
-user_confirm "# Update credentials" "y"
+echo -e "# Set your docker credentials if you haven't already. This only "
+echo -e "# Needs to be done once, the first time through:"
+echo -e "#   Username: lularoboticsnw"
+echo -e "#   Password: private communication"
+echo -e "#   Email: your choice :)"
+user_confirm "# Update credentials" "n"
 if [[ "y" == "${USER_CONFIRM_RESULT}" ]];then
     docker login
 fi
 
 echo -e "###############################################################"
 echo -e "# We will update binary software package with the latest version"
-echo -e "# this will take several minutes for the first time."
-user_confirm "# Continue" "n"
+echo -e "# This could take several minutes the first time through. After"
+echo -e "# that the update should be fast."
+user_confirm "# Continue" "y"
 if [[ "n" == "${USER_CONFIRM_RESULT}" ]];then
     echo -e "stopped since user did want to stop";
     exit 1;
@@ -103,7 +104,7 @@ bash ${SCRIPT_DIR}/data/docker_tools.sh --load-image
 echo -e "###############################################################"
 echo -e "# We will setup a workspace in $(pwd)/lularobotics_ws if not existing"
 echo -e "# If existing we will update our repositories"
-user_confirm "# Continue" "n"
+user_confirm "# Continue" "y"
 if [[ "n" == "${USER_CONFIRM_RESULT}" ]];then
     echo -e "stopped since user did not confirm the current directory";
     exit 1;
@@ -188,7 +189,7 @@ echo -e "# rosrun nw_motion_optimization start_motion_optimization_service.sh"
 echo -e "# --- terminal 5:"
 echo -e "# cd ${CUR_DIR}/lularobotics_ws"
 echo -e "# source devel/setup.bash"
-echo -e "# roslaunch nw_mico_client mico_simple_client.launch"
+echo -e "# rosrun nw_mico_client run_riemo_move_mico_playground -.3 .5 .3"
 echo -e "###############################################################"
 }
 

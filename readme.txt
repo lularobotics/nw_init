@@ -97,6 +97,14 @@ Troubleshooting
   We will be implementing multithreaded optimization with with multiple
   initialization strategies soon; those issues should go away.
 
+===============================================================================
+How to shutdown the riemo planning server
+===============================================================================
+The planning server and robot visualization and  emulation require an explicit shutdown.
+In order to do that launch the shutdown procedure as follows:
+  # In any terminal
+  roslaunch nw_motion_optimization shutdown_riemo_mico_server_with_robot_emulator.launch
+
 
 ===============================================================================
 The basic API

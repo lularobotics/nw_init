@@ -186,7 +186,7 @@ How to play around with the system
 ===============================================================================
 
 Moving the obstacle around: The sphere can be moved around and even removed 
-as specified in the section abovce.
+as specified in the section above.
 
 Modifying the constraints: The easiest way to play around with the planner
 is to use run_riemo_move_mico_playground. The user can turn on and off various

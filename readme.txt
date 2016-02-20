@@ -54,12 +54,10 @@ Demo: Playground
   roslaunch nw_mico_client mico_rviz_only.launch
 
   # In terminal 2
-  rosrun nw_motion_optimization start_motion_optimization_emulator.sh
+  roslaunch nw_motion_optimization riemo_mico_server_with_robot_emulator.launch
+  # this will start the planning server, the robot visualization and the robot emulator 
 
-  # In terminal 3
-  rosrun nw_motion_optimization start_motion_optimization_service.sh
-
-  # In terminal 4, now we can run the client to make planning requests. In the following,
+  # In terminal 3, now we can run the client to make planning requests. In the following,
   # <x>, <y>, <z> specifies a target location:
   rosrun nw_mico_client run_riemo_move_mico_playground <x> <y> <z>
 

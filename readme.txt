@@ -88,7 +88,17 @@ Demo: Comprehensive
   # For real robot: launch nw_motion_optimization riemo_mico_server.launch
   
   # In terminal 2
-  rosrun nw_mico_client run_all_mico_demos
+  rosrun nw_mico_client run_basic_mico_demos
+  # Or, for a more comprehensive version: rosrun nw_mico_client run_comprehensive_mico_demos
+
+Demos:
+- run_basic_mico_demos: Runs each of the features back and forth across the
+  spherical object just once.
+- run_comprehensive_mico_demos: Runs a more comprehensive set of demos. Uses
+  the same ordering as before, but uses a series of 8 target points for each
+  configuration.
+- Configurations for each demo as given in the config/demos directory of nw_mico_client
+
 
 Demo: Playground
 

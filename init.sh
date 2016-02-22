@@ -178,7 +178,7 @@ echo -e "# roslaunch nw_motion_optimization riemo_mico_server_with_robot_emulato
 echo -e "#"
 echo -e "# --- terminal 2:"
 echo -e "# source <workspace>/devel/setup.bash"
-echo -e "# rosrun nw_mico_client run_all_mico_demos"
+echo -e "# rosrun nw_mico_client run_basic_mico_demos"
 echo -e "#"
 echo -e "###############################################################"
 }

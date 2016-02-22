@@ -138,6 +138,14 @@ Troubleshooting
   keyword confusing.  It simply tells the compiler to infer the type from the
   right hand side of the equals sign.
 
+===============================================================================
+How to shutdown the riemo planning server
+===============================================================================
+The planning server and robot visualization and  emulation require an explicit shutdown.
+In order to do that launch the shutdown procedure as follows:
+  # In any terminal
+  roslaunch nw_motion_optimization shutdown_riemo_mico_server_with_robot_emulator.launch
+
 
 ===============================================================================
 The basic API
@@ -242,7 +250,7 @@ How to play around with the system
 ===============================================================================
 
 Moving the obstacle around: The sphere can be moved around and even removed 
-as specified in the section abovce.
+as specified in the section above.
 
 Modifying the constraints: The easiest way to play around with the planner
 is to use run_riemo_move_mico_playground. The user can turn on and off various

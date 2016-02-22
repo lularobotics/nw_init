@@ -88,9 +88,7 @@ Demo: Comprehensive
   # For real robot: launch nw_motion_optimization riemo_mico_server.launch
   
   # In terminal 2
-  roscd nw_mico_client/config/demos
-  ./run_all_mico_demos
-
+  rosrun nw_mico_client run_all_mico_demos
 
 Demo: Playground
 

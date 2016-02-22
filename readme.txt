@@ -1,4 +1,32 @@
 ===============================================================================
+New features
+===============================================================================
+
+1. Safety checks on the motion solution. If they fail, the motion optimization
+   will fail and the trajectory query tool sill never be initialized.
+2. Motion optimization is more robust. The suite of demos and test runs is more
+   comprehensive, varying target locations as well as differing behavior types.
+3. Switching between moving over the object vs moving around the object is now
+   handled through modeling of the Riemannian geometry of the workspace within
+   the RieMO (Riemannian Motion Optimization) framework. The Riemannian
+   geometry of the workspace defines the meaning of geodesic (shortest path) in
+   the workspace; when biasing toward moving over the table we stretch the
+   workspace so that shortest paths tend to pass over the object, and when
+   biasing toward moving around the object we stretch the workspace so that
+   shortest paths tend to go around. Both obstacle_linearization_constraint_csv
+   and passthrough_constraint_csv are still available in the API, they're just
+   unnecessary now for the purposes of switching between moving over vs around.
+4. Added approach shaping wherein the robot explicitly approaches the target
+   from the approach direction (rather than just achieving that orientation at
+   the end). During the approach the robot opens the hand, and then closes it
+   at the end to establish a grasp.
+5. Reoriented the robot so that the x-axis of the root frame points forward
+   into the primary area of the workspace. Previously we had the y-axis
+   pointing forward.  This new orientation better matches the range of the
+   first joint, which has the robot pointing forward at its center
+   configuration of q1 = 0.
+
+===============================================================================
 Setting up and building
 ===============================================================================
 
@@ -48,8 +76,39 @@ use the API is given in
 To start these nodes up and run the client, run the following (making 
 sure that the workspace's devel/setup.bash script is sourced for each:
 
+Demo: Comprehensive
+
+  # In terminal 1 (when using the emulator)
+  roslaunch nw_motion_optimization riemo_mico_server_with_robot_emulator.launch
+  # For real robot: launch nw_motion_optimization riemo_mico_server.launch
+  
+  # In terminal 2
+  roscd nw_mico_client/config/demos
+  ./run_all_mico_demos
+
+
 Demo: Playground
 
+  # In terminal 1 (when using the emulator)
+  roslaunch nw_motion_optimization riemo_mico_server_with_robot_emulator.launch
+  # For real robot: launch nw_motion_optimization riemo_mico_server.launch
+
+  # In terminal 2, now we can run the client to make planning requests. In the following,
+  # <x>, <y>, <z> specifies a target location. The specified yaml configuration file relative
+  # to the nw_mico_client package and specifies the behavioral information needed to fill
+  # in the motion optimizatino action request.
+  rosrun nw_mico_client nw_mico_simple_move_client config/mico_move_task_config.yaml <x> <y> <z>
+
+  # To play with the settings of the config:
+  roscd nw_mico_client/config
+  vim mico_move_task_config.yaml
+
+  # Also, we can place a sphere in the environment by executing the following command
+  # a convenient configuration is (.5, .0, .1) with a radius of .15.
+  rosrun nw_mico_client set_obstacle_parameters <x> <y> <z> <radius>
+
+
+Launching the server side components manually without the launch file:
   # In terminal 1
   roslaunch nw_mico_client mico_rviz_only.launch
 
@@ -57,27 +116,15 @@ Demo: Playground
   rosrun nw_motion_optimization start_motion_optimization_emulator.sh
 
   # In terminal 3
+  rosrun nw_motion_optimization start_motion_optimization_visualizer.sh
+
+  # In terminal 4
   rosrun nw_motion_optimization start_motion_optimization_service.sh
 
-  # In terminal 4, now we can run the client to make planning requests. In the following,
-  # <x>, <y>, <z> specifies a target location:
-  rosrun nw_mico_client run_riemo_move_mico_playground <x> <y> <z>
+  # To stop 2 through 4 these, run (substituting emulator, visualizer, service
+  # for <component>):
+  rosrun nw_motion_optimization stop_motion_optimization_<component>.sh
 
-  # To play with the settings of the run_riemo_move_mico_playground script:
-  roscd nw_mico_client scripts
-  vim run_riemo_move_mico_playground
-  # Modify the constraint settings as described in the comments.
-
-  # Also, we can place a sphere in the environment by executing:
-  rosrun nw_mico_client set_obstacle_parameters <x> <y> <z> <radius>
-
-Demo: Comprehensive
-
-  # Open up terminals 1 through 3 as above, but in terminal 4 instead of running the 
-  # run_riemo_move_mico_playground script, execute the "run_all" script. Make sure
-  # You're actually in the "scripts" directory for this:
-  roscd nw_mico_client/scripts
-  ./run_all
 
 Troubleshooting
 - When rviz comes up, some times the main screen is black. This seems to be a
@@ -87,17 +134,9 @@ Troubleshooting
   robot has no registered transforms so it is just a bundle of unrendered parts
   at the origin. This goes away immediately once the robot emulator has
   started.
-- The obstacle doesn't appear until the planning server has been started.
 - The code uses c++11. If you're not familiar with it, you might find the auto
   keyword confusing.  It simply tells the compiler to infer the type from the
   right hand side of the equals sign.
-- When the approach constraint is set, the robot achieves the right
-  orientation, but it doesn't *approach* from that orientation. The approach
-  functionality has not yet been implemented, but it will soon.
-- Robustness will improve. The motion optimization is usually quite good, but
-  every once in a while, the random initialization causes planning failures.
-  We will be implementing multithreaded optimization with with multiple
-  initialization strategies soon; those issues should go away.
 
 
 ===============================================================================
@@ -131,39 +170,56 @@ Setting the request:
 - Basic API specified through: riemo_move_action/action/Plan.action
 - Here's a detailed breakdown of the request's fields taken from the action definition:
 
-  # 3D target position
-  geometry_msgs/Point target
+# 3D target position
+geometry_msgs/Point target
 
-  # Set to true to include an orientation constraint to keep the hand upright
-  # throughout the entire motion.
-  bool use_upright_orientation_constraint
+# Behavior type of "over" makes the robot go over the object; behavior type of
+# "around" makes it go around the object.
+string behavioral_type
+string BEHAVIORAL_TYPE_DEFAULT=default
+string BEHAVIORAL_TYPE_OVER=over
+string BEHAVIORAL_TYPE_AROUND=around
 
-  # Set to true to include an orientation constraint to keep the hand upright
-  # only at the final configuration.
-  bool use_upright_orientation_constraint_end_only
+# Specifies the orientation the end-effector should have to be considered
+# "upright". Must be orthogonal to the approach_constraint_csv. Constrains the
+# y-axis of the end-effector. Application of this constraint are governed by
+# use_upright_orientation_constraint{_end_only}.
+string upright_constraint_direction_csv
 
-  # Note on format: in the following <v{x,y,z}> denotes a vector and <pt{x,y,z}>
-  # denotes a point.
+# Set to true to include an orientation constraint to keep the hand upright
+# throughout the entire motion.
+bool use_upright_orientation_constraint
 
-  # Specify an approach constraint. This constraint is a vector, specified as a comma
-  # separated string of three numbers, specifying the direction that the end-effector should
-  # approach the target from at the end of the motion.
-  string approach_constraint_csv # Format: <vx>,<vy>,<vz>
+# Set to true to include an orientation constraint to keep the hand upright
+# only at the final configuration.
+bool use_upright_orientation_constraint_end_only
 
-  # This CSV gives a ray pointing from the the center of the sphere to the
-  # surface where a linearization constraint should be added. A linearization
-  # constraint is a linear function whose zero set is offset by .03 m radially
-  # from the tangent to the surface and increases away from the sphere. The
-  # constraint is applied t_fraction of the way through the trajectory and it
-  # enforces that the end-effector be on the position side of the plane at that
-  # point.
-  string obstacle_linearization_constraint_csv # Format: <vx>,<vy>,<vz>,<t_fraction>
+# Note on format: in the following <v{x,y,z}> denotes a vector and <pt{x,y,z}>
+# denotes a point.
 
-  # The passthrough constraint is a more restrictive variant of a constraint that
-  # constrains the behavior of the robot as it moves from point to point. It gives
-  # a full box at (<ptx>,<pty>,<ptz>) with 1/2 side length (radius) of <radius>. 
-  # It is again applied t_fraction of the way through the trajectory.
-  string passthrough_constraint_csv # Format: <ptx>,<pty>,<ptz>,<radius>,<t_fraction>
+# Specify an approach constraint. This constraint is a vector, specified as a comma
+# separated string of three numbers, specifying the direction that the end-effector should
+# approach the target from at the end of the motion.
+string approach_constraint_csv # Format: <vx>,<vy>,<vz>
+
+# When true, approaches the target *from* the approach direction and opens and
+# closes the grippers to establish a grasp.
+bool shape_approach
+
+# This CSV gives a ray pointing from the the center of the sphere to the
+# surface where a linearization constraint should be added. A linearization
+# constraint is a linear function whose zero set is offset by .03 m radially
+# from the tangent to the surface and increases away from the sphere. The
+# constraint is applied t_fraction of the way through the trajectory and it
+# enforces that the end-effector be on the position side of the plane at that
+# point.
+string obstacle_linearization_constraint_csv # Format: <vx>,<vy>,<vz>,<t_fraction>
+
+# The passthrough constraint is a more restrictive variant of a constraint that
+# constrains the behavior of the robot as it moves from point to point. It gives
+# a full box at (<ptx>,<pty>,<ptz>) with 1/2 side length (radius) of <radius>. 
+# It is again applied t_fraction of the way through the trajectory.
+string passthrough_constraint_csv # Format: <ptx>,<pty>,<ptz>,<radius>,<t_fraction>
 
 
 

@@ -3,7 +3,9 @@ New features
 ===============================================================================
 
 1. Safety checks on the motion solution. If they fail, the motion optimization
-   will fail and the trajectory query tool sill never be initialized.
+   will fail and the trajectory query tool sill never be initialized. Verifies 
+   that joint limits are satisfied and that velocities and accelerations are 
+   within a nominal range.
 2. Motion optimization is more robust. The suite of demos and test runs is more
    comprehensive, varying target locations as well as differing behavior types.
 3. Switching between moving over the object vs moving around the object is now
@@ -58,13 +60,16 @@ Follow the instructions:
 How to run the demo(s)
 ===============================================================================
 
-There are three nodes that need to be started in order to setup the system
+There are four nodes that need to be started in order to setup the system
 1. Rviz with the /robot_description parameter
 2. The robot emulator: this node serves to substitute for the real robot in
    simulation.  It keeps track of and publishes the current state, and accepts
    joint trajectory messages to emulate their execution. Sends transforms to
    Rviz for visualization of the movements.
-3. Motion optimization service: Creates the planning action service and the 
+3. The robot visualizer: Subscribes to the /joint_states topic and publishes
+   transforms to rviz. The /joint_states come from either the emulator or ROS
+   control on the real robot.
+4. Motion optimization service: Creates the planning action service and the 
    trajectory query service.
 
 And finally, once those are setup, motion optimization requests can be sent to

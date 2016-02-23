@@ -86,6 +86,34 @@ listed below use the python script for its simplicity.
 To start these nodes up and run the client, run the following (making 
 sure that the workspace's devel/setup.bash script is sourced for each:
 
+===============================================================================
+
+Brief:
+
+In general, startup and shutdown of the RieMO server can be handled though the
+following commands:
+
+Startup RieMO server:
+
+  roslaunch nw_motion_optimization riemo_mico_server_with_robot_emulator.launch
+
+Shutdown RieMO server:
+
+  rosrun nw_motion_optimization riemo_mico_server_shutdown.sh
+
+Once the server is running one can start planning actions and query for trajectories
+using the 
+
+  riemo_move_action/action/Plan.action 
+  
+interface. Example usage is given in 
+
+  nw_mico_client/scripts/nw_mico_simple_move_client.py 
+
+See the demos for specific examples of the usage.
+
+===============================================================================
+
 Demo: Comprehensive
 
   # In terminal 1 (when using the emulator)
@@ -95,6 +123,9 @@ Demo: Comprehensive
   # In terminal 2
   rosrun nw_mico_client run_basic_mico_demos
   # Or, for a more comprehensive version: rosrun nw_mico_client run_comprehensive_mico_demos
+
+  # Shutdown when done.
+  rosrun nw_motion_optimization riemo_mico_server_shutdown.sh
 
 Demos:
 - run_basic_mico_demos: Runs each of the features back and forth across the
@@ -115,7 +146,7 @@ Demo: Playground
   # <x>, <y>, <z> specifies a target location. The specified yaml configuration file relative
   # to the nw_mico_client package and specifies the behavioral information needed to fill
   # in the motion optimizatino action request.
-  rosrun nw_mico_client nw_mico_simple_move_client config/mico_move_task_config.yaml <x> <y> <z>
+  rosrun nw_mico_client nw_mico_simple_move_client.py config/mico_move_task_config.yaml <x> <y> <z>
 
   # To play with the settings of the config:
   roscd nw_mico_client/config
@@ -125,6 +156,8 @@ Demo: Playground
   # a convenient configuration is (.5, .0, .1) with a radius of .15.
   rosrun nw_mico_client set_obstacle_parameters <x> <y> <z> <radius>
 
+  # Shutdown when done.
+  rosrun nw_motion_optimization riemo_mico_server_shutdown.sh
 
 Launching the server side components manually without the launch file:
   # In terminal 1
@@ -155,6 +188,7 @@ Troubleshooting
 - The code uses c++11. If you're not familiar with it, you might find the auto
   keyword confusing.  It simply tells the compiler to infer the type from the
   right hand side of the equals sign.
+
 
 ===============================================================================
 How to shutdown the riemo planning server

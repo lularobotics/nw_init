@@ -60,6 +60,34 @@ Follow the instructions:
 How to run the demo(s)
 ===============================================================================
 
+Brief:
+
+In general, startup and shutdown of the RieMO server can be handled though the
+following commands:
+
+Startup RieMO server:
+
+  roslaunch nw_motion_optimization riemo_mico_server_with_robot_emulator.launch
+
+Shutdown RieMO server:
+
+  rosrun nw_motion_optimization riemo_mico_server_shutdown.sh
+
+Once the server is running one can start planning actions and query for trajectories
+using the 
+
+  riemo_move_action/action/Plan.action 
+  
+interface. Example usage is given in 
+
+  nw_mico_client/scripts/nw_mico_simple_move_client.py 
+
+See the demos for specific examples of the usage.
+
+-------------------------------------------------------------------------------
+
+More details:
+
 There are four nodes that need to be started in order to setup the system
 1. Rviz with the /robot_description parameter
 2. The robot emulator: this node serves to substitute for the real robot in
@@ -86,33 +114,9 @@ listed below use the python script for its simplicity.
 To start these nodes up and run the client, run the following (making 
 sure that the workspace's devel/setup.bash script is sourced for each:
 
-===============================================================================
+-------------------------------------------------------------------------------
 
-Brief:
-
-In general, startup and shutdown of the RieMO server can be handled though the
-following commands:
-
-Startup RieMO server:
-
-  roslaunch nw_motion_optimization riemo_mico_server_with_robot_emulator.launch
-
-Shutdown RieMO server:
-
-  rosrun nw_motion_optimization riemo_mico_server_shutdown.sh
-
-Once the server is running one can start planning actions and query for trajectories
-using the 
-
-  riemo_move_action/action/Plan.action 
-  
-interface. Example usage is given in 
-
-  nw_mico_client/scripts/nw_mico_simple_move_client.py 
-
-See the demos for specific examples of the usage.
-
-===============================================================================
+Explicit instructions for running the demos:
 
 Demo: Comprehensive
 

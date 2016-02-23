@@ -47,7 +47,7 @@ Follow the instructions:
 4. If there is a problem with the build, you can always rebuild manually by
    going into the lularobotics_ws workspace and running
 
-       catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
    
    In general, when changing any of the client code (see the note below about
    playing with speed modulation in the execution), you can rebuild manually
@@ -249,14 +249,14 @@ In any terminal
     roslaunch nw_motion_optimization shutdown_riemo_mico_server_with_robot_emulator.launch
 
 
-## The basic API
+# The basic API
 
 ### ROS topics
-- /joint_states : the robot emulator publishes the current joint states on this
+- `/joint_states` : the robot emulator publishes the current joint states on this
   topic as sensor_msgs::JointState messages.  The motion optimization service
   consumes these messages to know where the robot currently is when it starts
   planning and whenever it is queried for a trajectory once the LQR is ready.
-- /joint_trajectory : The trajectory query service publishes on this topic.
+- `/joint_trajectory` : The trajectory query service publishes on this topic.
   The robot emulator consumes these messages and emulates movement along the
   trajectory while sending visualization transforms to Rviz.
 
@@ -278,57 +278,56 @@ See the demo client for an example of how to use the API:
 - Basic API specified through: riemo_move_action/action/Plan.action
 - Here's a detailed breakdown of the request's fields taken from the action definition:
 
-      # 3D target position
-      geometry_msgs/Point target
-      
-      # Behavior type of "over" makes the robot go over the object; behavior type of
-      # "around" makes it go around the object.
-      string behavioral_type
-      string BEHAVIORAL_TYPE_DEFAULT=default
-      string BEHAVIORAL_TYPE_OVER=over
-      string BEHAVIORAL_TYPE_AROUND=around
-      
-      # Specifies the orientation the end-effector should have to be considered
-      # "upright". Must be orthogonal to the approach_constraint_csv. Constrains the
-      # y-axis of the end-effector. Application of this constraint are governed by
-      # use_upright_orientation_constraint{_end_only}.
-      string upright_constraint_direction_csv
-      
-      # Set to true to include an orientation constraint to keep the hand upright
-      # throughout the entire motion.
-      bool use_upright_orientation_constraint
-      
-      # Set to true to include an orientation constraint to keep the hand upright
-      # only at the final configuration.
-      bool use_upright_orientation_constraint_end_only
-      
-      # Note on format: in the following <v{x,y,z}> denotes a vector and <pt{x,y,z}>
-      # denotes a point.
-      
-      # Specify an approach constraint. This constraint is a vector, specified as a comma
-      # separated string of three numbers, specifying the direction that the end-effector should
-      # approach the target from at the end of the motion.
-      string approach_constraint_csv # Format: <vx>,<vy>,<vz>
-      
-      # When true, approaches the target *from* the approach direction and opens and
-      # closes the grippers to establish a grasp.
-      bool shape_approach
-      
-      # This CSV gives a ray pointing from the the center of the sphere to the
-      # surface where a linearization constraint should be added. A linearization
-      # constraint is a linear function whose zero set is offset by .03 m radially
-      # from the tangent to the surface and increases away from the sphere. The
-      # constraint is applied t_fraction of the way through the trajectory and it
-      # enforces that the end-effector be on the position side of the plane at that
-      # point.
-      string obstacle_linearization_constraint_csv # Format: <vx>,<vy>,<vz>,<t_fraction>
-      
-      # The passthrough constraint is a more restrictive variant of a constraint that
-      # constrains the behavior of the robot as it moves from point to point. It gives
-      # a full box at (<ptx>,<pty>,<ptz>) with 1/2 side length (radius) of <radius>. 
-      # It is again applied t_fraction of the way through the trajectory.
-      string passthrough_constraint_csv # Format: <ptx>,<pty>,<ptz>,<radius>,<t_fraction>
-
+        # 3D target position
+        geometry_msgs/Point target
+       
+        # Behavior type of "over" makes the robot go over the object; behavior type of
+        # "around" makes it go around the object.
+        string behavioral_type
+        string BEHAVIORAL_TYPE_DEFAULT=default
+        string BEHAVIORAL_TYPE_OVER=over
+        string BEHAVIORAL_TYPE_AROUND=around
+       
+        # Specifies the orientation the end-effector should have to be considered
+        # "upright". Must be orthogonal to the approach_constraint_csv. Constrains the
+        # y-axis of the end-effector. Application of this constraint are governed by
+        # use_upright_orientation_constraint{_end_only}.
+        string upright_constraint_direction_csv
+       
+        # Set to true to include an orientation constraint to keep the hand upright
+        # throughout the entire motion.
+        bool use_upright_orientation_constraint
+        
+        # Set to true to include an orientation constraint to keep the hand upright
+        # only at the final configuration.
+        bool use_upright_orientation_constraint_end_only
+        
+        # Note on format: in the following <v{x,y,z}> denotes a vector and <pt{x,y,z}>
+        # denotes a point.
+        
+        # Specify an approach constraint. This constraint is a vector, specified as a comma
+        # separated string of three numbers, specifying the direction that the end-effector should
+        # approach the target from at the end of the motion.
+        string approach_constraint_csv # Format: <vx>,<vy>,<vz>
+        
+        # When true, approaches the target *from* the approach direction and opens and
+        # closes the grippers to establish a grasp.
+        bool shape_approach
+        
+        # This CSV gives a ray pointing from the the center of the sphere to the
+        # surface where a linearization constraint should be added. A linearization
+        # constraint is a linear function whose zero set is offset by .03 m radially
+        # from the tangent to the surface and increases away from the sphere. The
+        # constraint is applied t_fraction of the way through the trajectory and it
+        # enforces that the end-effector be on the position side of the plane at that
+        # point.
+        string obstacle_linearization_constraint_csv # Format: <vx>,<vy>,<vz>,<t_fraction>
+       
+        # The passthrough constraint is a more restrictive variant of a constraint that
+        # constrains the behavior of the robot as it moves from point to point. It gives
+        # a full box at (<ptx>,<pty>,<ptz>) with 1/2 side length (radius) of <radius>. 
+        # It is again applied t_fraction of the way through the trajectory.
+        string passthrough_constraint_csv # Format: <ptx>,<pty>,<ptz>,<radius>,<t_fraction>   
 
 
 #### Placing and removing spherical obstacles:

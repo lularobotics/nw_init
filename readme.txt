@@ -139,6 +139,28 @@ Demos:
   configuration.
 - Configurations for each demo as given in the config/demos directory of nw_mico_client
 
+Details about the ordering. Conceptually, the demos are ordered as follows:
+
+  for approach_type in ["use_approach", "no_approach"]:
+    for upright_type in ["end_only", "whole_traj", "none"]":
+      for behavioral_type in ["default", "around", "over"]:
+        for target in target_list:
+          run_demo_with(appraoch_type, upright_type, behavioral_type, target)
+        done
+      done
+    done
+  done
+
+The demos run everything with the approach shaping first, and then everything
+again without the approach shaping. For each upright constraint type it runs a
+series of trials with different behavior types, starting with none (default),
+then proceeding to moving around the object, and then moving over the object.
+It first exercises end-only upright constraints to make transitions from no
+end-effector constraints safe, then applies the upright constraint to the
+entire trajectory, and finally removes it entirely, running the series of
+behavior types for each. And finally, for each individual trial type, it runs
+the trial on a series of target points moving back and forth across the
+obstacle in the center.
 
 Demo: Playground
 

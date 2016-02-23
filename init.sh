@@ -181,7 +181,7 @@ echo -e "# source <workspace>/devel/setup.bash"
 echo -e "# rosrun nw_mico_client run_basic_mico_demos"
 echo -e "#"
 echo -e "# --- When finished, shutdown with:"
-echo -e "# rosrun nw_motion_optimization riemo_mico_server_shutdown.sh
+echo -e "# rosrun nw_motion_optimization riemo_mico_server_shutdown.sh"
 echo -e "#"
 echo -e "###############################################################"
 }

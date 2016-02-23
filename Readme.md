@@ -1,4 +1,5 @@
 
+
 # New features
 
 1. Safety checks on the motion solution. If they fail, the motion optimization

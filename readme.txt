@@ -76,7 +76,12 @@ And finally, once those are setup, motion optimization requests can be sent to
 the robot using the Plan action API discussed below. A simple example of how to 
 use the API is given in 
 
-  nw_mico_client/src/nw_mico_client/nw_mico_simple_move_client_main.cpp
+  c++:    nw_mico_client/src/nw_mico_client/nw_mico_simple_move_client_main.cpp
+  python: nw_mico_client/scripts/nw_mico_simple_move_client.py
+
+Both clients implement basically the same functionality. The cpp client demos
+more meticulously slowing down and speeding up the execution, but the demos
+listed below use the python script for its simplicity.
 
 To start these nodes up and run the client, run the following (making 
 sure that the workspace's devel/setup.bash script is sourced for each:

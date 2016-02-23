@@ -1,4 +1,4 @@
-===============================================================================
+
 New features
 ===============================================================================
 
@@ -28,7 +28,7 @@ New features
    first joint, which has the robot pointing forward at its center
    configuration of q1 = 0.
 
-===============================================================================
+
 Setting up and building
 ===============================================================================
 
@@ -56,7 +56,6 @@ Follow the instructions:
    this way.
 
 
-===============================================================================
 How to run the demo(s)
 ===============================================================================
 
@@ -216,7 +215,6 @@ Troubleshooting
   right hand side of the equals sign.
 
 
-===============================================================================
 How to shutdown the riemo planning server
 ===============================================================================
 The planning server and robot visualization and  emulation require an explicit shutdown.
@@ -225,7 +223,6 @@ In order to do that launch the shutdown procedure as follows:
   roslaunch nw_motion_optimization shutdown_riemo_mico_server_with_robot_emulator.launch
 
 
-===============================================================================
 The basic API
 ===============================================================================
 
@@ -323,7 +320,6 @@ Example
   rosrun nw_mico_client set_obstacle_parameters clear
 
 
-===============================================================================
 How to play around with the system
 ===============================================================================
 
@@ -335,7 +331,6 @@ is to use run_riemo_move_mico_playground. The user can turn on and off various
 subsets of constraints by setting and unsetting the shell script variables.
 
 
-===============================================================================
 Modulating the speed of execution in the demos on the fly
 ===============================================================================
 

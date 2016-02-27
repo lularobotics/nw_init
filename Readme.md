@@ -15,6 +15,15 @@
    for the finger dimensions) on `/joint_trajectory_raw`. The robot emulator
    now listens to the `/joint_trajectory_raw` topic so that it can visualize
    the raw finger joint angles.
+3. Added "pickup" and "place" options in Plan.action: When "shape_approach" is
+   not set, "pickup" and "place", when true, will enable specialized pickup and
+   place motions at the beginning and end of the trajectory, respectively. They
+   can be specified independently or in combination. Additionally, the gripper
+   remains closed by default unless "shape_approach" is true, in which case it
+   opens and closes as usual to establish a grasp. When "shape_approach" is
+   true, both "pickup" and "place" are ignored, because it's assumed that a
+   grasp has not yet been established. The demos that don't use
+   "shape_approach" now use both the "pickup" and "place" options.
     
 
 # Prev new features 

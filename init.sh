@@ -128,14 +128,15 @@ if [[ ! -e ${TMP_PATH} ]];then
     catkin_init_workspace
 fi
 
-TMP_PATH=${CUR_DIR}/lularobotics_ws/src/kinova-ros;
+TMP_PATH=${CUR_DIR}/lularobotics_ws/src/nw_mico;
 if [[ ! -d ${TMP_PATH} ]];then
-    echo -e "clone package for the the kinova roboots"
-    git clone https://github.com/Kinovarobotics/kinova-ros.git
+    echo -e "clone package for nw_mico for urdf and rviz launch"
+    git clone https://github.com/lularobotics/nw_mico.git
 else
     cd ${TMP_PATH}
     git pull 
 fi
+
 TMP_PATH=${CUR_DIR}/lularobotics_ws/src/nw_motion_optimization;
 if [[ ! -d ${TMP_PATH} ]];then
     echo -e "clone package for the interaction with the binary distributed motion optimization library"

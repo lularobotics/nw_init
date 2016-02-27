@@ -1,6 +1,23 @@
+# New features for update URDF
 
+1. Uses the URDF defined in nw_mico/mico-modified-working.urdf rather than the
+   kinova-ros URDF. This URDF is a slightly modified version of the NW URDF,
+   most notably the joint limits have been modified to prevent self-collisions.
+   The original values are commented out, and comments describe the rationale
+   behind the changes.
+2. The client `nw_mico_client/scripts/nw_mico_simple_move_client.py` now
+   queries the trajectory rather than "broadcasting" it, so that it can
+   transform the finger dimensions into finger commands in the range [0, 6000]
+   before publishing. The upper joint limit for the fingers is set to .8 which
+   is 2/3s of the maximal value of 1.2 so that the maximum finger command when
+   scaled by the client ends up being 4000. It publishes the transformed
+   trajectory on `/joint_trajectory` and the raw trajectory (with joint angles
+   for the finger dimensions) on `/joint_trajectory_raw`. The robot emulator
+   now listens to the `/joint_trajectory_raw` topic so that it can visualize
+   the raw finger joint angles.
+    
 
-# New features
+# Prev new features 
 
 1. Safety checks on the motion solution. If they fail, the motion optimization
    will fail and the trajectory query tool sill never be initialized. Verifies 

@@ -329,8 +329,18 @@ See the demo client for an example of how to use the API:
         string approach_constraint_csv # Format: <vx>,<vy>,<vz>
         
         # When true, approaches the target *from* the approach direction and opens and
-        # closes the grippers to establish a grasp.
+        # closes the grippers to establish a grasp. This functionality specifies moving
+        # toward an object to establish a grasp. For that reason, it turns off the
+        # pickup and putdown functionality if either of those are set.
         bool shape_approach
+
+        # When true (and shape_approach is not set) performs a "pickup" motion at the
+        # beginning of the trajectory.
+        bool pickup
+
+        # When true (and shape_approach is not set) performs a "putdown" motion at the
+        # beginning of the trajectory.
+        bool putdown
         
         # This CSV gives a ray pointing from the the center of the sphere to the
         # surface where a linearization constraint should be added. A linearization

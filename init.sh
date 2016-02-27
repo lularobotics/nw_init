@@ -113,7 +113,19 @@ fi
 ################################################################################
 # setting up our workspace
 ################################################################################
+
 CUR_DIR=$(pwd)
+
+TMP_PATH=${CUR_DIR}/lularobotics_ws/src/kinova-ros;
+if [[ -d ${TMP_PATH} ]]; then
+  echo -e "# Remove $TMP_PATH package? "
+  user_confirm "# It's no longer needed. " "y"
+  if [[ "y" == "${USER_CONFIRM_RESULT}" ]];then
+    echo "removing..."
+    rm -rf $TMP_PATH
+  fi
+fi
+
 TMP_PATH=${CUR_DIR}/lularobotics_ws;
 if [[ ! -d ${TMP_PATH} ]];then
     mkdir ${TMP_PATH};
